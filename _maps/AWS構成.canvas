@@ -1,204 +1,30 @@
 {
-	"nodes": [
-		{
-			"id": "title",
-			"type": "text",
-			"text": "# AWS構成\nAWS では、どの部品がどこに置かれ、どこで通信を制限しているかを示すマップ。\n\n説明ページ：[[AWS構成]]\n層の見方：[[OSI参照モデルとリクエスト]]",
-			"x": 0,
-			"y": 0,
-			"width": 520,
-			"height": 200
-		},
-		{
-			"id": "user",
-			"type": "text",
-			"text": "## ブラウザ\nインターネット側",
-			"x": 600,
-			"y": 10,
-			"width": 220,
-			"height": 100,
-			"color": "5"
-		},
-		{
-			"id": "dns",
-			"type": "text",
-			"text": "### [[DNS]]\nドメイン名を IP アドレスに変換する",
-			"x": 900,
-			"y": 0,
-			"width": 260,
-			"height": 130
-		},
-		{
-			"id": "ext",
-			"type": "text",
-			"text": "## 外部API\n決済など",
-			"x": 1360,
-			"y": 320,
-			"width": 220,
-			"height": 100,
-			"color": "5"
-		},
-		{
-			"id": "vpc",
-			"type": "group",
-			"label": "VPC 10.0.0.0/16（AZ を2つ以上にまたがせる）",
-			"x": 0,
-			"y": 200,
-			"width": 1300,
-			"height": 800
-		},
-		{
-			"id": "pub",
-			"type": "group",
-			"label": "パブリックサブネット：インターネットから届く",
-			"x": 40,
-			"y": 250,
-			"width": 1220,
-			"height": 220,
-			"color": "4"
-		},
-		{
-			"id": "alb",
-			"type": "text",
-			"text": "### [[ALB]]\n443 番で受け、ヘルスチェックに通ったサーバーへ転送する",
-			"x": 80,
-			"y": 300,
-			"width": 260,
-			"height": 130
-		},
-		{
-			"id": "nat",
-			"type": "text",
-			"text": "## NAT Gateway\n中から外へ出るための出口。\n外からは入れない",
-			"x": 920,
-			"y": 290,
-			"width": 300,
-			"height": 140
-		},
-		{
-			"id": "sg",
-			"type": "text",
-			"text": "**SG：ALB からだけ :8080 を許可**",
-			"x": 80,
-			"y": 490,
-			"width": 380,
-			"height": 50,
-			"color": "1"
-		},
-		{
-			"id": "pri",
-			"type": "group",
-			"label": "プライベートサブネット：外から直接は届かない",
-			"x": 40,
-			"y": 560,
-			"width": 1220,
-			"height": 400,
-			"color": "6"
-		},
-		{
-			"id": "task",
-			"type": "group",
-			"label": "ECS タスク",
-			"x": 70,
-			"y": 610,
-			"width": 700,
-			"height": 320
-		},
-		{
-			"id": "app",
-			"type": "text",
-			"text": "### アプリケーションサーバー\nリクエストを受けて、コードを実行する。動き方は [[実行モデル]]",
-			"x": 100,
-			"y": 650,
-			"width": 300,
-			"height": 130
-		},
-		{
-			"id": "ecs",
-			"type": "text",
-			"text": "### [[ECS]]\n指定した数のコンテナを動かし続ける",
-			"x": 440,
-			"y": 650,
-			"width": 300,
-			"height": 130
-		},
-		{
-			"id": "pool",
-			"type": "text",
-			"text": "### [[接続プール]]\nDB への接続を作り置きして、使い回す",
-			"x": 100,
-			"y": 790,
-			"width": 300,
-			"height": 130
-		},
-		{
-			"id": "sgdb",
-			"type": "text",
-			"text": "**SG：アプリからだけ :3306 を許可**",
-			"x": 820,
-			"y": 620,
-			"width": 400,
-			"height": 50,
-			"color": "1"
-		},
-		{
-			"id": "rds",
-			"type": "text",
-			"text": "### [[RDS]]\nAWS が運用する MySQL などの DB。マルチ AZ で切り替えに備える",
-			"x": 860,
-			"y": 700,
-			"width": 320,
-			"height": 150
-		}
+	"nodes":[
+		{"id":"title","type":"text","text":"# AWS構成\nAWS では、どの部品がどこに置かれ、どこで通信を制限しているかを示すマップ。\n\n説明ページ：[[AWS構成]]\n層の見方：[[OSI参照モデルとリクエスト]]","x":0,"y":0,"width":520,"height":200},
+		{"id":"user","type":"text","text":"## ブラウザ\nインターネット側","x":600,"y":10,"width":220,"height":100,"color":"5"},
+		{"id":"dns","type":"text","text":"### [[DNS]]\nドメイン名を IP アドレスに変換する","x":900,"y":0,"width":260,"height":130},
+		{"id":"ext","type":"text","text":"## 外部API\n決済など","x":1360,"y":320,"width":220,"height":100,"color":"5"},
+		{"id":"vpc","type":"group","label":"VPC 10.0.0.0/16（AZ を2つ以上にまたがせる）","x":0,"y":200,"width":1300,"height":800},
+		{"id":"pub","type":"group","label":"パブリックサブネット：インターネットから届く","x":40,"y":250,"width":1220,"height":220,"color":"4"},
+		{"id":"alb","type":"text","text":"### [[ALB]]\n443 番で受け、ヘルスチェックに通ったサーバーへ転送する","x":80,"y":300,"width":260,"height":130},
+		{"id":"nat","type":"text","text":"## NAT Gateway\n中から外へ出るための出口。\n外からは入れない","x":920,"y":290,"width":300,"height":140},
+		{"id":"sg","type":"text","text":"**SG：ALB からだけ :8080 を許可**","x":80,"y":490,"width":380,"height":50,"color":"1"},
+		{"id":"pri","type":"group","label":"プライベートサブネット：外から直接は届かない","x":40,"y":560,"width":1220,"height":400,"color":"6"},
+		{"id":"task","type":"group","label":"ECS タスク","x":70,"y":610,"width":700,"height":320},
+		{"id":"app","type":"text","text":"### アプリケーションサーバー\nリクエストを受けて、コードを実行する。動き方は [[実行モデル]]","x":100,"y":650,"width":300,"height":130},
+		{"id":"ecs","type":"text","text":"### [[ECS]]\n指定した数のコンテナを動かし続ける","x":440,"y":650,"width":300,"height":130},
+		{"id":"pool","type":"text","text":"### [[接続プール]]\nDB への接続を作り置きして、使い回す","x":100,"y":790,"width":300,"height":130},
+		{"id":"sgdb","type":"text","text":"**SG：アプリからだけ :3306 を許可**","x":820,"y":620,"width":400,"height":50,"color":"1"},
+		{"id":"rds","type":"text","text":"### [[RDS]]\nAWS が運用する MySQL などの DB。マルチ AZ で切り替えに備える","x":860,"y":700,"width":320,"height":150},
+		{"id":"ecr","type":"text","text":"### [[ECR]]\nVPC の外（AWS 全体）。タスクが起動するときに、ここからイメージを取得する","x":440,"y":1060,"width":300,"height":130}
 	],
-	"edges": [
-		{
-			"id": "e1",
-			"fromNode": "user",
-			"fromSide": "right",
-			"toNode": "dns",
-			"toSide": "left",
-			"label": "① 名前解決"
-		},
-		{
-			"id": "e2",
-			"fromNode": "user",
-			"fromSide": "bottom",
-			"toNode": "alb",
-			"toSide": "top",
-			"label": "② HTTPS :443"
-		},
-		{
-			"id": "e3",
-			"fromNode": "alb",
-			"fromSide": "bottom",
-			"toNode": "app",
-			"toSide": "top",
-			"label": "HTTP :8080（平文）"
-		},
-		{
-			"id": "e4",
-			"fromNode": "pool",
-			"fromSide": "right",
-			"toNode": "rds",
-			"toSide": "left",
-			"label": "TCP :3306"
-		},
-		{
-			"id": "e5",
-			"fromNode": "task",
-			"fromSide": "top",
-			"toNode": "nat",
-			"toSide": "bottom",
-			"label": "外部へ"
-		},
-		{
-			"id": "e6",
-			"fromNode": "nat",
-			"fromSide": "right",
-			"toNode": "ext",
-			"toSide": "left",
-			"label": "送信元 IP を変換"
-		}
+	"edges":[
+		{"id":"e1","fromNode":"user","fromSide":"right","toNode":"dns","toSide":"left","label":"① 名前解決"},
+		{"id":"e2","fromNode":"user","fromSide":"bottom","toNode":"alb","toSide":"top","label":"② HTTPS :443"},
+		{"id":"e3","fromNode":"alb","fromSide":"bottom","toNode":"app","toSide":"top","label":"HTTP :8080（平文）"},
+		{"id":"e4","fromNode":"pool","fromSide":"right","toNode":"rds","toSide":"left","label":"TCP :3306"},
+		{"id":"e5","fromNode":"task","fromSide":"top","toNode":"nat","toSide":"bottom","label":"外部へ"},
+		{"id":"e6","fromNode":"nat","fromSide":"right","toNode":"ext","toSide":"left","label":"送信元 IP を変換"},
+		{"id":"e7","fromNode":"ecr","fromSide":"top","toNode":"task","toSide":"bottom","label":"起動時にイメージを取得"}
 	]
 }

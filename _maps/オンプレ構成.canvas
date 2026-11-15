@@ -7,7 +7,7 @@
 		{"id":"net","type":"group","label":"社内のネットワーク","x":0,"y":200,"width":1320,"height":900},
 		{"id":"fw","type":"text","text":"**ファイアウォール**：外からは 443 だけをロードバランサーへ通す／中から外へは送信元 IP を変換して出す","x":40,"y":240,"width":1240,"height":80,"color":"1"},
 		{"id":"dmz","type":"group","label":"DMZ：外から届く区画","x":40,"y":350,"width":1240,"height":200,"color":"4"},
-		{"id":"lb","type":"text","text":"### [[ロードバランサー]]\n2台を仮想 IP で切り替え、1台が止まっても受け続ける","x":80,"y":395,"width":320,"height":130},
+		{"id":"lb","type":"text","text":"### [[ロードバランサー]]\n443 で受けて [[TLS]] を解く。2台を仮想 IP で切り替え、1台が止まっても受け続ける","x":80,"y":395,"width":320,"height":150},
 		{"id":"fw2","type":"text","text":"**ロードバランサーからだけ :80 を許可**","x":80,"y":570,"width":520,"height":50,"color":"1"},
 		{"id":"in","type":"group","label":"内部の区画：外から直接は届かない","x":40,"y":640,"width":1240,"height":440,"color":"6"},
 		{"id":"web","type":"group","label":"Web・アプリのサーバー（2台以上）","x":70,"y":690,"width":700,"height":360},
