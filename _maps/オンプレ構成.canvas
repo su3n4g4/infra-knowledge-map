@@ -1,0 +1,31 @@
+{
+	"nodes":[
+		{"id":"title","type":"text","text":"# オンプレ構成\n自分たちのサーバーで組むとき、どの部品がどこに置かれ、どこで通信を制限しているかを示すマップ。\n\n説明ページ：[[オンプレ構成]]","x":0,"y":0,"width":560,"height":200},
+		{"id":"user","type":"text","text":"## ブラウザ\nインターネット側","x":640,"y":10,"width":220,"height":100,"color":"5"},
+		{"id":"dns","type":"text","text":"### [[DNS]]\nドメイン名を IP アドレスに変換する","x":940,"y":0,"width":260,"height":130},
+		{"id":"ext","type":"text","text":"## 外部API\n決済など","x":1400,"y":235,"width":220,"height":100,"color":"5"},
+		{"id":"net","type":"group","label":"社内のネットワーク","x":0,"y":200,"width":1320,"height":900},
+		{"id":"fw","type":"text","text":"**ファイアウォール**：外からは 443 だけをロードバランサーへ通す／中から外へは送信元 IP を変換して出す","x":40,"y":240,"width":1240,"height":80,"color":"1"},
+		{"id":"dmz","type":"group","label":"DMZ：外から届く区画","x":40,"y":350,"width":1240,"height":200,"color":"4"},
+		{"id":"lb","type":"text","text":"### [[ロードバランサー]]\n2台を仮想 IP で切り替え、1台が止まっても受け続ける","x":80,"y":395,"width":320,"height":130},
+		{"id":"fw2","type":"text","text":"**ロードバランサーからだけ :80 を許可**","x":80,"y":570,"width":520,"height":50,"color":"1"},
+		{"id":"in","type":"group","label":"内部の区画：外から直接は届かない","x":40,"y":640,"width":1240,"height":440,"color":"6"},
+		{"id":"web","type":"group","label":"Web・アプリのサーバー（2台以上）","x":70,"y":690,"width":700,"height":360},
+		{"id":"nginx","type":"text","text":"### [[Nginx]]\nHTTP を受け、アプリへ渡す","x":100,"y":735,"width":300,"height":130},
+		{"id":"app","type":"text","text":"### アプリケーションサーバー\nコードを実行する。動き方は [[実行モデル]]","x":440,"y":735,"width":300,"height":130},
+		{"id":"orch","type":"text","text":"### [[オーケストレーション]]\nsystemd が、落ちたプロセスを起動し直す","x":100,"y":895,"width":300,"height":130},
+		{"id":"pool","type":"text","text":"### [[接続プール]]\nDB への接続を作り置きして、使い回す","x":440,"y":895,"width":300,"height":130},
+		{"id":"db","type":"text","text":"### [[データベースサーバー]]\nプライマリとレプリカの2台。Web・アプリのサーバーからの 3306 だけを許可","x":820,"y":690,"width":420,"height":160},
+		{"id":"ses","type":"text","text":"## セッションの保存先\nRedis など。どのサーバーに届いても同じセッションを読める","x":820,"y":885,"width":420,"height":150}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"user","fromSide":"right","toNode":"dns","toSide":"left","label":"① 名前解決"},
+		{"id":"e2","fromNode":"user","fromSide":"bottom","toNode":"fw","toSide":"top","label":"② HTTPS :443"},
+		{"id":"e3","fromNode":"fw","fromSide":"bottom","toNode":"lb","toSide":"top","label":"443 だけ"},
+		{"id":"e4","fromNode":"lb","fromSide":"bottom","toNode":"nginx","toSide":"top","label":"HTTP :80"},
+		{"id":"e5","fromNode":"nginx","fromSide":"right","toNode":"app","toSide":"left","label":""},
+		{"id":"e6","fromNode":"pool","fromSide":"right","toNode":"db","toSide":"left","label":"TCP :3306"},
+		{"id":"e7","fromNode":"app","fromSide":"right","toNode":"ses","toSide":"left","label":"セッション"},
+		{"id":"e8","fromNode":"fw","fromSide":"right","toNode":"ext","toSide":"left","label":"外部へ（NAT）"}
+	]
+}

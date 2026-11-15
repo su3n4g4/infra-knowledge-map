@@ -1,0 +1,33 @@
+{
+	"nodes":[
+		{"id":"roll","type":"group","x":0,"y":280,"width":1960,"height":360,"label":"② オーケストレーションが自動で行うこと"},
+		{"id":"ci","type":"group","x":0,"y":0,"width":1960,"height":220,"label":"① 人と CI が行うこと（05_配布）"},
+		{"id":"title","type":"text","text":"# デプロイの流れ\nコードを push してから、本番が新しい版に入れ替わるまでに、何がどの順番で起きるかを示すマップ。\n\n説明ページ：[[デプロイの流れ]]","x":0,"y":-260,"width":600,"height":200},
+		{"id":"push","type":"text","text":"## git push\nmain へ反映","x":40,"y":50,"width":200,"height":110},
+		{"id":"cicard","type":"text","text":"### [[CI]]\npush のたびにテストし、イメージを作る","x":280,"y":40,"width":260,"height":130},
+		{"id":"rolling","type":"text","text":"### [[ローリング更新]]\n新旧を少しずつ入れ替える（この枠の流れ全体）","x":40,"y":330,"width":260,"height":130,"color":"4"},
+		{"id":"v2","type":"text","text":"## v2 を1個起動","x":340,"y":345,"width":200,"height":100},
+		{"id":"rb","type":"text","text":"### [[ロールバック判断]]\n問題が出たら、戻すか直して進むかを決める","x":920,"y":710,"width":300,"height":130},
+		{"id":"incident","type":"text","text":"### [[障害の切り分け]]\n症状から原因を探す","x":1260,"y":710,"width":240,"height":130},
+		{"id":"ecs","type":"text","text":"### [[オーケストレーション]]\n指定した数のコンテナを動かし続ける","x":1680,"y":40,"width":260,"height":130},
+		{"id":"mig","type":"text","text":"### [[DBマイグレーション]]\nテーブル構造の変更を、どの環境にも同じ順で適用する","x":1220,"y":40,"width":280,"height":130},
+		{"id":"ecr","type":"text","text":"### [[コンテナレジストリ]]\nビルドしたイメージを保存する","x":790,"y":40,"width":260,"height":130},
+		{"id":"gs","type":"text","text":"### [[グレースフルシャットダウン]]\n処理中のリクエストを終えてから止まる","x":1640,"y":330,"width":300,"height":130},
+		{"id":"hc","type":"text","text":"### [[ヘルスチェック]]\n新しい版が正常に応答するか確かめる","x":720,"y":330,"width":260,"height":130},
+		{"id":"remove","type":"text","text":"## v1 をロードバランサーから外す\n新しいリクエストを送らない","x":1130,"y":335,"width":260,"height":120},
+		{"id":"loop","type":"text","text":"v1 が残っていれば繰り返す","x":1260,"y":520,"width":300,"height":70,"color":"4"}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"push","fromSide":"right","toNode":"cicard","toSide":"left"},
+		{"id":"e2","fromNode":"cicard","fromSide":"right","toNode":"ecr","toSide":"left","label":"タグ = git SHA"},
+		{"id":"e3","fromNode":"ecr","fromSide":"right","toNode":"mig","toSide":"left","label":"1回だけ"},
+		{"id":"e4","fromNode":"mig","fromSide":"right","toNode":"ecs","toSide":"left","label":"v1 → v2"},
+		{"id":"e5","fromNode":"ecs","fromSide":"bottom","toNode":"v2","toSide":"top","label":"入れ替え開始"},
+		{"id":"e6","fromNode":"v2","fromSide":"right","toNode":"hc","toSide":"left","label":"正常？"},
+		{"id":"e7","fromNode":"hc","fromSide":"right","toNode":"remove","toSide":"left","label":"通った"},
+		{"id":"e8","fromNode":"remove","fromSide":"right","toNode":"gs","toSide":"left","label":"SIGTERM"},
+		{"id":"e9","fromNode":"gs","fromSide":"bottom","toNode":"loop","toSide":"top"},
+		{"id":"e10","fromNode":"loop","fromSide":"left","toNode":"v2","toSide":"bottom","label":"はい"},
+		{"id":"e11","fromNode":"rb","fromSide":"right","toNode":"incident","toSide":"left"}
+	]
+}

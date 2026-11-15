@@ -1,0 +1,11 @@
+# Obsidian の個人設定と作業ファイル
+.obsidian/
+.trash/
+
+# OS が作るファイル
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Claude Code の個人設定
+.claude/settings.local.json

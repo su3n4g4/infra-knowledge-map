@@ -1,0 +1,33 @@
+{
+	"nodes":[
+		{"id":"L7","type":"group","x":-40,"y":0,"width":3600,"height":260,"color":"5","label":"L7 アプリケーション：HTTP・SQL・DNS"},
+		{"id":"L6","type":"group","x":-40,"y":360,"width":3600,"height":200,"color":"6","label":"L6 プレゼンテーション：暗号化（TLS）"},
+		{"id":"L4","type":"group","x":-40,"y":680,"width":3600,"height":200,"color":"3","label":"L4 トランスポート：TCP 接続・ポート番号"},
+		{"id":"L3","type":"group","x":-40,"y":1000,"width":3600,"height":200,"color":"2","label":"L3 ネットワーク：IP アドレス・経路"},
+		{"id":"browser","type":"text","text":"## ブラウザ\nexample.com を開く","x":0,"y":75,"width":220,"height":100},
+		{"id":"dns","type":"text","text":"### [[DNS]]\nドメイン名を IP アドレスに変換する","x":560,"y":60,"width":260,"height":130},
+		{"id":"sg","type":"text","text":"## 通信の許可\nセキュリティグループ・ルートテーブルが、IP とポートで通すか決める","x":840,"y":1040,"width":280,"height":140,"color":"1"},
+		{"id":"app","type":"text","text":"### アプリケーションサーバー\nHTTP を読んで、コードを実行する。動き方は [[実行モデル]]","x":2240,"y":60,"width":280,"height":140},
+		{"id":"ext","type":"text","text":"## 外部API","x":3120,"y":75,"width":220,"height":100},
+		{"id":"rds","type":"text","text":"### [[データベースサーバー]]\nアプリから接続を受け、SQL を実行してデータを保存する","x":2680,"y":65,"width":260,"height":130},
+		{"id":"alb","type":"text","text":"### [[ロードバランサー]]\nL7 なら L4〜L7 をまとめて終端し、アプリへ新しい接続を張る","x":1520,"y":40,"width":260,"height":805},
+		{"id":"tcp","type":"text","text":"## TCP 接続\n3-way handshake で接続を張る。毎回張ると重い","x":340,"y":715,"width":260,"height":130},
+		{"id":"tls","type":"text","text":"### [[TLS]]\n通信を暗号化し、相手が本物か証明書で確かめる","x":600,"y":400,"width":260,"height":130},
+		{"id":"pool","type":"text","text":"### [[接続プール]]\nDB への接続を作り置きして、使い回す","x":2240,"y":715,"width":280,"height":130},
+		{"id":"nat","type":"text","text":"## NAT\n送信元 IP を書き換えて外へ出す。外からは入れない","x":3120,"y":1040,"width":240,"height":140,"color":"1"},
+		{"id":"key","type":"text","text":"**見るポイント**\n- L7 のロードバランサーは L4〜L7 をまとめて **終端** し、アプリへ新しい接続を張る\n- NAT は L3 で IP だけを **書き換える**","x":580,"y":-360,"width":560,"height":180,"color":"4"},
+		{"id":"title","type":"text","text":"# OSI参照モデルとリクエスト\n1リクエストの各部品が、OSI 参照モデルのどの層で何をしているかを示すマップ。\n\n横＝リクエストの順番、縦＝層。説明ページ：[[OSI参照モデルとリクエスト]]","x":-20,"y":-360,"width":560,"height":220}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"browser","fromSide":"right","toNode":"dns","toSide":"left","label":"① 名前を IP に"},
+		{"id":"e2","fromNode":"browser","fromSide":"bottom","toNode":"tcp","toSide":"left","label":"② 接続を張る"},
+		{"id":"e3","fromNode":"tcp","fromSide":"top","toNode":"tls","toSide":"left","label":"③ 暗号化"},
+		{"id":"e4","fromNode":"tls","fromSide":"bottom","toNode":"sg","toSide":"left","label":"④ 通れるか"},
+		{"id":"e5","fromNode":"sg","fromSide":"right","toNode":"alb","toSide":"left","label":"⑤ ロードバランサーで終端"},
+		{"id":"e6","fromNode":"alb","fromSide":"right","toNode":"app","toSide":"left","label":"⑥ 新しい接続（平文 HTTP）"},
+		{"id":"e7","fromNode":"app","fromSide":"bottom","toNode":"pool","toSide":"top","label":"⑦ 接続を借りる"},
+		{"id":"e8","fromNode":"pool","fromSide":"right","toNode":"rds","toSide":"bottom","label":"SQL :3306"},
+		{"id":"e9","fromNode":"app","fromSide":"right","toNode":"nat","toSide":"left","label":"外部へ出るとき"},
+		{"id":"e10","fromNode":"nat","fromSide":"top","toNode":"ext","toSide":"bottom"}
+	]
+}

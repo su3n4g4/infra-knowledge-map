@@ -1,0 +1,31 @@
+{
+	"nodes":[
+		{"id":"net","type":"group","x":360,"y":0,"width":920,"height":600,"label":"ネットワーク（02_ネットワーク）"},
+		{"id":"comp","type":"group","x":1360,"y":0,"width":660,"height":600,"label":"コンピューティング（03_コンピューティング）"},
+		{"id":"data","type":"group","x":2080,"y":0,"width":340,"height":600,"label":"データ（04_データ）"},
+		{"id":"title","type":"text","text":"# 1リクエストの流れ\nURL を開いてからレスポンスが返るまでに、何がどの順番で起きるかを示すマップ。\n\n枠は分類（＝フォルダ）。説明ページ：[[1リクエストの流れ]]","x":0,"y":-260,"width":600,"height":200},
+		{"id":"dns","type":"text","text":"### [[DNS]]\nドメイン名を IP アドレスに変換する","x":400,"y":40,"width":260,"height":130},
+		{"id":"cdn","type":"text","text":"### [[CDN]]\n静的ファイルのコピーを、利用者に近いサーバーから返す","x":400,"y":210,"width":260,"height":130},
+		{"id":"browser","type":"text","text":"## ブラウザ\nexample.com/books?q=go","x":0,"y":230,"width":220,"height":110,"color":"5"},
+		{"id":"pool","type":"text","text":"### [[接続プール]]\nDB への接続を作り置きして、使い回す","x":2120,"y":40,"width":260,"height":130},
+		{"id":"rds","type":"text","text":"### [[データベースサーバー]]\nアプリから接続を受け、SQL を実行してデータを保存する","x":2120,"y":210,"width":260,"height":130},
+		{"id":"n1","type":"text","text":"### [[N+1問題]]\n1件ごとに追加のクエリを発行してしまう書き方","x":2120,"y":380,"width":260,"height":130},
+		{"id":"nginx","type":"text","text":"### [[Nginx]]\nHTTP を受け、静的ファイル以外をアプリへ渡す（置かない構成もある）","x":1400,"y":40,"width":280,"height":130},
+		{"id":"t3","type":"text","text":"**動き方で注意点が変わる** → [[実行モデル]]\n- 作り直す型：worker 数が同時処理の上限。Nginx が必要\n- 常駐型：上限は自分で決める。Nginx は任意","x":1400,"y":400,"width":580,"height":160,"color":"4"},
+		{"id":"app","type":"text","text":"### アプリケーションサーバー\nリクエストを受けて、アプリのコードを実行する","x":1720,"y":210,"width":260,"height":130},
+		{"id":"tls","type":"text","text":"### [[TLS]]\n通信を暗号化し、相手が本物か証明書で確かめる","x":960,"y":40,"width":260,"height":130},
+		{"id":"alb","type":"text","text":"### [[ロードバランサー]]\n1つの受け口で受け、正常に応答しているサーバーへ転送する","x":960,"y":210,"width":260,"height":130}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"browser","fromSide":"top","toNode":"dns","toSide":"left","label":"① 名前解決"},
+		{"id":"e2","fromNode":"browser","fromSide":"right","toNode":"cdn","toSide":"left","label":"② HTTPS"},
+		{"id":"e2b","fromNode":"tls","fromSide":"bottom","toNode":"alb","toSide":"top","label":"ここで解く"},
+		{"id":"e3","fromNode":"cdn","fromSide":"right","toNode":"alb","toSide":"left","label":"③ 動的なものだけ"},
+		{"id":"e4","fromNode":"alb","fromSide":"right","toNode":"nginx","toSide":"left","label":"④ 置く場合"},
+		{"id":"e5","fromNode":"nginx","fromSide":"bottom","toNode":"app","toSide":"top","label":"転送"},
+		{"id":"e6","fromNode":"alb","fromSide":"right","toNode":"app","toSide":"left","label":"④ 直結する場合"},
+		{"id":"e7","fromNode":"app","fromSide":"right","toNode":"pool","toSide":"left","label":"⑤ 接続を借りる"},
+		{"id":"e8","fromNode":"pool","fromSide":"bottom","toNode":"rds","toSide":"top","label":"SQL :3306"},
+		{"id":"e9","fromNode":"n1","fromSide":"top","toNode":"rds","toSide":"bottom","label":"遅くなる原因"}
+	]
+}

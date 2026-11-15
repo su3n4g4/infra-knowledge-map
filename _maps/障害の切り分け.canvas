@@ -1,0 +1,187 @@
+{
+	"nodes": [
+		{
+			"id": "title",
+			"type": "text",
+			"text": "# 障害の切り分け\n症状から、どこを疑えばよいかを示すマップ。\n\n上の段が通り道、赤は症状。説明ページ：[[障害の切り分け]]",
+			"x": 0,
+			"y": -260,
+			"width": 620,
+			"height": 200
+		},
+		{
+			"id": "order",
+			"type": "text",
+			"text": "**調べる順番**\n1. 影響範囲をつかむ（全員か、一部か、特定の機能か）\n2. メトリクスで、異常が出ている場所を見つける\n3. ログで原因を掘る\n4. 仮説を1つずつ確かめる（同時に複数を変えない）",
+			"x": 680,
+			"y": -260,
+			"width": 620,
+			"height": 200,
+			"color": "4"
+		},
+		{
+			"id": "user",
+			"type": "text",
+			"text": "## ユーザー",
+			"x": 0,
+			"y": 15,
+			"width": 200,
+			"height": 100,
+			"color": "5"
+		},
+		{
+			"id": "dns",
+			"type": "text",
+			"text": "### [[DNS]]\nドメイン名を IP アドレスに変換する",
+			"x": 260,
+			"y": 0,
+			"width": 260,
+			"height": 130
+		},
+		{
+			"id": "cdn",
+			"type": "text",
+			"text": "### [[CDN]]\n静的ファイルのコピーを、利用者に近いサーバーから返す",
+			"x": 580,
+			"y": 0,
+			"width": 260,
+			"height": 130
+		},
+		{
+			"id": "lb",
+			"type": "text",
+			"text": "### [[ロードバランサー]]\n1つの受け口で受け、正常に応答しているサーバーへ転送する",
+			"x": 900,
+			"y": 0,
+			"width": 260,
+			"height": 130
+		},
+		{
+			"id": "app",
+			"type": "text",
+			"text": "### アプリケーションサーバー\nコードを実行する。動き方は [[実行モデル]]",
+			"x": 1220,
+			"y": 0,
+			"width": 260,
+			"height": 130
+		},
+		{
+			"id": "db",
+			"type": "text",
+			"text": "### [[データベースサーバー]]\nアプリから接続を受け、SQL を実行してデータを保存する",
+			"x": 1540,
+			"y": 0,
+			"width": 260,
+			"height": 130
+		},
+		{
+			"id": "ext",
+			"type": "text",
+			"text": "## 外部API",
+			"x": 1540,
+			"y": -170,
+			"width": 260,
+			"height": 90
+		},
+		{
+			"id": "s_dns",
+			"type": "text",
+			"text": "**アプリは正常なのに繋がらない**\n名前解決、TTL の切り替え中",
+			"x": 260,
+			"y": 190,
+			"width": 260,
+			"height": 180,
+			"color": "1"
+		},
+		{
+			"id": "s_cdn",
+			"type": "text",
+			"text": "**反映されない**\n古いキャッシュ\n\n**証明書の警告**\n→ [[TLS]]",
+			"x": 580,
+			"y": 190,
+			"width": 260,
+			"height": 180,
+			"color": "1"
+		},
+		{
+			"id": "s_lb",
+			"type": "text",
+			"text": "**502 / 503 / 504**\nコードでロードバランサーが何に失敗したかが決まる\n\n**時々ログアウトされる**\nセッションの置き場所",
+			"x": 900,
+			"y": 190,
+			"width": 260,
+			"height": 220,
+			"color": "1"
+		},
+		{
+			"id": "s_app",
+			"type": "text",
+			"text": "**時々 502**\n→ [[オーケストレーション]]\n\n**デプロイのときだけ 502**\n→ [[グレースフルシャットダウン]]",
+			"x": 1220,
+			"y": 190,
+			"width": 260,
+			"height": 220,
+			"color": "1"
+		},
+		{
+			"id": "s_db",
+			"type": "text",
+			"text": "**全体が遅い**\n→ [[N+1問題]]\n\n**Too many connections**\n→ [[接続プール]]",
+			"x": 1540,
+			"y": 190,
+			"width": 260,
+			"height": 220,
+			"color": "1"
+		}
+	],
+	"edges": [
+		{
+			"id": "e1",
+			"fromNode": "user",
+			"fromSide": "right",
+			"toNode": "dns",
+			"toSide": "left",
+			"label": ""
+		},
+		{
+			"id": "e2",
+			"fromNode": "dns",
+			"fromSide": "right",
+			"toNode": "cdn",
+			"toSide": "left",
+			"label": ""
+		},
+		{
+			"id": "e3",
+			"fromNode": "cdn",
+			"fromSide": "right",
+			"toNode": "lb",
+			"toSide": "left",
+			"label": ""
+		},
+		{
+			"id": "e4",
+			"fromNode": "lb",
+			"fromSide": "right",
+			"toNode": "app",
+			"toSide": "left",
+			"label": ""
+		},
+		{
+			"id": "e5",
+			"fromNode": "app",
+			"fromSide": "right",
+			"toNode": "db",
+			"toSide": "left",
+			"label": ""
+		},
+		{
+			"id": "e6",
+			"fromNode": "app",
+			"fromSide": "top",
+			"toNode": "ext",
+			"toSide": "left",
+			"label": ""
+		}
+	]
+}
