@@ -9,6 +9,7 @@
 
 1. このフォルダを Obsidian の保管庫に入れる（保管庫のどこに置いてもよい。リンクはファイル名で指しているので、フォルダの位置は関係しない）
    - 図の一部は Excalidraw で描いている。コミュニティプラグイン「Excalidraw」を入れる
+   - Excalidraw の図を Obsidian のライト／ダークに合わせるには、プラグインの設定（Excalidraw appearance and behavior → Theme and styling）で「Existing drawings to match Obsidian theme」と「Excalidraw to follow when Obsidian Theme changes」をオンにする。図のファイルには背景の色を決め打ちで書かない
 2. `_maps/00_全体マップ.md` を開く。場面（理解する／作業する／困った）と疑問から、進むマップを選べる
 
 ### GitHub で読むとき
