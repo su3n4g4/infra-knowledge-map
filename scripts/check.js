@@ -47,8 +47,9 @@ function section(text, heading) {
 }
 
 const files = walk('');
+const EXCALIDRAW = '.excalidraw.md';
 const notes = {}; // 名前 → { file, text, fm, links }
-for (const file of files.filter((f) => f.endsWith('.md') && f !== 'README.md')) {
+for (const file of files.filter((f) => f.endsWith('.md') && !f.endsWith(EXCALIDRAW) && f !== 'README.md')) {
   const name = path.basename(file, '.md');
   if (notes[name]) err(file, `同じ名前のノートが ${notes[name].file} にもある`);
   const text = fs.readFileSync(path.join(ROOT, file), 'utf8');
@@ -57,7 +58,19 @@ for (const file of files.filter((f) => f.endsWith('.md') && f !== 'README.md')) 
   notes[name] = { file, text, fm: frontmatter(text), links };
 }
 
-const canvases = {}; // 名前 → { file, links }
+// 図は Obsidian のキャンバス（.canvas）か Excalidraw（.excalidraw.md）。1枚のマップにどちらか1つ
+const canvases = {}; // 名前 → { file, ext, links }
+const addFigure = (file, name, ext, links) => {
+  if (canvases[name]) err(file, `同じマップの図が ${canvases[name].file} にもある（図はどちらか1つにする）`);
+  canvases[name] = { file, ext, links };
+};
+for (const file of files.filter((f) => f.endsWith(EXCALIDRAW))) {
+  const text = fs.readFileSync(path.join(ROOT, file), 'utf8');
+  // リンクは「## Text Elements」に書かれる。%% から後（描画データ）は読まない
+  const head = text.split(/^%%\s*$/m)[0];
+  if (!/^## Text Elements\s*$/m.test(head)) err(file, 'Excalidraw のファイルとして読めない（## Text Elements が無い）');
+  addFigure(file, path.basename(file, EXCALIDRAW), 'excalidraw', linksOf(head));
+}
 for (const file of files.filter((f) => f.endsWith('.canvas'))) {
   const name = path.basename(file, '.canvas');
   let data;
@@ -72,15 +85,24 @@ for (const file of files.filter((f) => f.endsWith('.canvas'))) {
     if (node.text) for (const l of linksOf(node.text)) links.add(l);
     if (node.type === 'file' && node.file) links.add(path.basename(node.file).replace(/\.[^.]+$/, ''));
   }
-  canvases[name] = { file, links, nodes: data.nodes || [] };
+  addFigure(file, name, 'canvas', links);
 }
 
 const isMap = (n) => notes[n] && notes[n].file.startsWith(`${MAP_DIR}/`);
 const isNote = (n) => notes[n] && !isMap(n);
 const mapNames = Object.keys(notes).filter(isMap);
 const noteNames = Object.keys(notes).filter(isNote);
-// マップの説明ページや図の中で、解説を指しているリンクだけを取り出す
-const noteLinks = (set) => new Set([...set].filter(isNote));
+
+// 全体マップの「これから書く解説」に挙げた名前は、まだファイルが無くてもリンクしてよい
+const planned = new Set([...(notes[TOP_MAP] ? linksOf(section(notes[TOP_MAP].text, 'これから書く解説') || '') : [])].filter((l) => !isMap(l)));
+for (const p of planned) {
+  if (notes[p]) err(notes[TOP_MAP].file, `[[${p}]] はもう作ってある。「これから書く解説」から外し、「分類 → フォルダ」の表に移す`);
+  else warn(notes[TOP_MAP].file, `[[${p}]] はまだ書いていない`);
+}
+const isPlanned = (n) => planned.has(n) && !notes[n];
+
+// マップの説明ページや図の中で、解説（これから書くものを含む）を指しているリンクだけを取り出す
+const noteLinks = (set) => new Set([...set].filter((l) => isNote(l) || isPlanned(l)));
 
 // README の「小分類」の表から、使ってよい値を読む
 const readme = fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8');
@@ -116,7 +138,11 @@ for (const n of mapNames) {
 }
 
 // 2. リンク切れ
-const exists = (l) => notes[l] || (l.endsWith('.canvas') && canvases[l.slice(0, -7)]) || l === 'README';
+const figureLink = (l) => {
+  const m = l.match(/^(.+)\.(canvas|excalidraw)$/);
+  return m && canvases[m[1]] && canvases[m[1]].ext === m[2];
+};
+const exists = (l) => notes[l] || figureLink(l) || isPlanned(l) || l === 'README';
 for (const n of Object.keys(notes)) for (const l of notes[n].links) if (!exists(l)) err(notes[n].file, `[[${l}]] の行き先が無い`);
 for (const c of Object.keys(canvases)) for (const l of canvases[c].links) if (!exists(l)) err(canvases[c].file, `[[${l}]] の行き先が無い`);
 
@@ -124,8 +150,8 @@ for (const c of Object.keys(canvases)) for (const l of canvases[c].links) if (!e
 for (const m of mapNames) {
   if (m === TOP_MAP) continue;
   const c = canvases[m];
-  if (!c) { err(notes[m].file, `図 ${MAP_DIR}/${m}.canvas が無い`); continue; }
-  if (!notes[m].links.has(`${m}.canvas`)) err(notes[m].file, `図へのリンク [[${m}.canvas]] が無い`);
+  if (!c) { err(notes[m].file, `図 ${MAP_DIR}/${m}.canvas か ${MAP_DIR}/${m}${EXCALIDRAW} が無い`); continue; }
+  if (!notes[m].links.has(`${m}.${c.ext}`)) err(notes[m].file, `図へのリンク [[${m}.${c.ext}]] が無い`);
   if (!c.links.has(m)) err(c.file, `説明ページへのリンク [[${m}]] が無い`);
   const inMd = noteLinks(notes[m].links);
   const inCanvas = noteLinks(c.links);
@@ -146,7 +172,7 @@ const mapsOf = {}; // 解説 → そのマップに載っているマップ（�
 for (const n of noteNames) mapsOf[n] = new Set();
 for (const m of mapNames) {
   if (m === TOP_MAP) continue;
-  for (const l of noteLinks(notes[m].links)) mapsOf[l].add(m);
+  for (const l of noteLinks(notes[m].links)) if (mapsOf[l]) mapsOf[l].add(m);
 }
 for (const n of noteNames) {
   const { file, text } = notes[n];
